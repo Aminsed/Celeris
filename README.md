@@ -1,6 +1,6 @@
 # Celeris: GPU-Accelerated Matrix Operations Library
 
-Celeris is a high-performance GPU library designed for rapid matrix operations, optimized for machine learning and scientific computing workloads.
+Celeris is a high-performance GPU library designed for rapid matrix operations, optimized for machine learning and scientific computing workloads. Inspired by [DeepGEMM](https://github.com/deepseek-ai/DeepGEMM), Celeris aims to provide efficient matrix operations with a clean, accessible implementation.
 
 ## Features
 
@@ -10,6 +10,18 @@ Celeris is a high-performance GPU library designed for rapid matrix operations, 
 - PyTorch-like API for easy integration
 - Support for various data types (FP32, FP16, BF16)
 - Dynamic kernel optimization for different GPU architectures
+
+## Inspiration and Techniques
+
+Celeris draws inspiration from [DeepGEMM](https://github.com/deepseek-ai/DeepGEMM), a clean and efficient GEMM kernel library developed by DeepSeek AI. Several key techniques have been adopted:
+
+- **Lightweight JIT Compilation**: Compiling kernels at runtime for optimal performance without heavy installation requirements
+- **Warp-Specialized Execution**: Overlapping data movement and computation for maximum efficiency
+- **Dynamic Block Scheduling**: Optimizing workload distribution across GPU SMs
+- **Unaligned Block Sizes**: Supporting non-power-of-2 block sizes for better SM utilization
+- **Automatic Data Type Selection**: Choosing optimal precision based on hardware capabilities
+
+While DeepGEMM focuses on FP8 operations with fine-grained scaling for Hopper architecture, Celeris provides a more general-purpose library supporting various data types and GPU architectures.
 
 ## Installation
 
@@ -211,4 +223,8 @@ The `examples/` directory contains various examples demonstrating Celeris capabi
 
 ## License
 
-[MIT License](LICENSE) 
+[MIT License](LICENSE)
+
+## Acknowledgements
+
+We would like to thank the developers of [DeepGEMM](https://github.com/deepseek-ai/DeepGEMM) for their innovative work on efficient matrix multiplication kernels, which has been a significant inspiration for this project. 

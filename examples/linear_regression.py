@@ -11,6 +11,7 @@ linear regression model.
 import numpy as np
 import matplotlib.pyplot as plt
 import celeris
+import torch
 
 # Generate synthetic data
 np.random.seed(42)
@@ -25,10 +26,6 @@ y_tensor = celeris.from_numpy(y)
 W = celeris.randn([1, 1])
 b = celeris.zeros([1])
 
-# Set requires_grad for parameters
-W.requires_grad = True
-b.requires_grad = True
-
 # Training parameters
 learning_rate = 0.01
 num_epochs = 100
@@ -38,33 +35,24 @@ for epoch in range(num_epochs):
     # Forward pass
     y_pred = celeris.matmul(X_tensor, W) + b
     
-    # Compute loss
-    loss = celeris.mse_loss(y_pred, y_tensor)
+    # Compute loss (MSE)
+    loss = torch.mean((y_pred - y_tensor) ** 2)
     
-    # Backward pass
-    loss.backward()
-    
-    # Update parameters (simplified since backward is not fully implemented)
-    # In a real implementation, we would use W.grad and b.grad
-    # For now, we'll compute gradients manually
-    dW = 2 * celeris.matmul(X_tensor.transpose([1, 0]), (y_pred - y_tensor)) / X.shape[0]
-    db = 2 * celeris.mean(y_pred - y_tensor)
+    # Compute gradients manually
+    dW = 2 * celeris.matmul(X_tensor.t(), (y_pred - y_tensor)) / X.shape[0]
+    db = 2 * torch.mean(y_pred - y_tensor)
     
     # Update parameters
     W = W - learning_rate * dW
     b = b - learning_rate * db
     
-    # Reset gradients
-    W.requires_grad = True
-    b.requires_grad = True
-    
     # Print progress
     if (epoch + 1) % 10 == 0:
-        print(f"Epoch [{epoch+1}/{num_epochs}], Loss: {loss.numpy()[0]:.4f}")
+        print(f"Epoch [{epoch+1}/{num_epochs}], Loss: {loss.item():.4f}")
 
 # Convert final parameters to numpy
-W_numpy = W.numpy()
-b_numpy = b.numpy()
+W_numpy = W.cpu().detach().numpy()
+b_numpy = b.cpu().detach().numpy()
 
 print(f"Final parameters: W = {W_numpy[0][0]:.4f}, b = {b_numpy[0]:.4f}")
 print(f"True parameters: W = 2.0000, b = 1.0000")

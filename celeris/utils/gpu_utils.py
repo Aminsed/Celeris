@@ -38,11 +38,20 @@ def get_gpu_info():
             "total_memory": props.total_memory,
             "memory_gb": props.total_memory / (1024**3),
             "multi_processor_count": props.multi_processor_count,
-            "max_threads_per_mp": props.max_threads_per_multi_processor,
             "warp_size": 32,  # Standard warp size for NVIDIA GPUs
             "has_tensor_cores": capability[0] >= 7,
             "architecture": _get_architecture_name(capability)
         }
+        
+        # Check if max_threads_per_multi_processor attribute exists
+        if hasattr(props, 'max_threads_per_multi_processor'):
+            info["max_threads_per_mp"] = props.max_threads_per_multi_processor
+        else:
+            # Default value based on compute capability
+            if capability[0] >= 7:
+                info["max_threads_per_mp"] = 1024  # Typical for newer architectures
+            else:
+                info["max_threads_per_mp"] = 2048  # Typical for older architectures
         
         gpu_info.append(info)
     
